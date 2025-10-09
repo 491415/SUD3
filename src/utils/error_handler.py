@@ -154,10 +154,10 @@ class ScriptExecutionWrapper:
         """
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
-        subject = f"❌ {env("APP_NAME")} Skripta Greška: {self.script_name}"
+        subject = f"❌ {env('APP_NAME')} Skripta Greška: {self.script_name}"
 
         body = f"""
-            {env("APP_NAME")} skripta greška prilikom izvršavanja
+            {env('APP_NAME')} skripta greška prilikom izvršavanja
             ========================================
 
             Skripta: {self.script_name}
@@ -169,7 +169,7 @@ class ScriptExecutionWrapper:
             Slijedeći koraci:
             1. Pogledajte log file u privitku za detalje
 
-            Ovo je automatski generirana poruka iz {env("APP_NAME")} aplikacije.
+            Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             Logovi se nalaze na lokaciji: {log_dir if log_dir else 'Nije definirano'}
             """
 
@@ -199,16 +199,16 @@ class ScriptExecutionWrapper:
         """
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
-        subject = f"✅ {env("APP_NAME")} Skripta Izvršena"
+        subject = f"✅ {env('APP_NAME')} Skripta Izvršena"
 
         body = f"""
-            {env("APP_NAME")} skripta uspješno izvršena
+            {env('APP_NAME')} skripta uspješno izvršena
             ========================================
 
             Skripta: {self.script_name}
             Vrijeme završetka: {timestamp}
 
-            Ovo je automatski generirana poruka iz {env("APP_NAME")} aplikacije.
+            Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             """
 
         try:

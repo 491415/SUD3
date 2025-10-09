@@ -2,7 +2,7 @@ import json
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Tuple, Dict, Any
+from typing import Any, Dict, Tuple
 
 from environs import env
 
@@ -96,7 +96,7 @@ def _generate_table_ddl(table_name: str, table_details: Dict[str, Any]) -> Tuple
         except ValueError as e:
             error_msg = f"Greška prilikom parsiranja stupca {col_name} u tablici {table_name}: {e}"
             logging.error(error_msg)
-            raise ValueError(error_msg)
+            raise ValueError(error_msg) from e
 
         # Dodavanje definicije stupca (zadnji stupac nema ',')
         is_last_column = i == len(properties) - 1
@@ -142,7 +142,7 @@ def generate_ddl(api_definition_file: Path) -> str:
     except json.JSONDecodeError as e:
         error_msg = f"Invalid JSON u API konfiguracijskom fileu: {e}"
         logging.error(error_msg)
-        raise json.JSONDecodeError(error_msg, e.doc, e.pos)
+        raise json.JSONDecodeError(error_msg, e.doc, e.pos) from e
 
     # Validiranje strukture JSON filea
     # Polje 'components' sadrži polje 'schemas' koje u sebi ima podatke o pojedinoj tablici
@@ -195,7 +195,7 @@ def save_ddl_to_file(ddl_content: str, output_path: Path) -> None:
     except IOError as e:
         error_msg = f"Greška prilikom zapisivanja DDL skripte na lokaciju {output_path}: {e}"
         logging.error(error_msg)
-        raise IOError(error_msg)
+        raise IOError(error_msg) from e
 
 
 if __name__ == "__main__":

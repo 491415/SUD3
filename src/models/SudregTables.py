@@ -103,6 +103,6 @@ class SudregTables(Enum):
         Detaljan prikaz za debugging.
         """
         return (
-            f"Tablice za preuzimanje ({len(self.value["included"])}): {self.value["included"]} \n"
-            f"Tablice bez preuzimanja ({len(self.value["excluded"])}): {self.value["excluded"]}"
+            f"Tablice za preuzimanje ({len(self.value['included'])}): {self.value['included']} \n"
+            f"Tablice bez preuzimanja ({len(self.value['excluded'])}): {self.value['excluded']}"
         )
