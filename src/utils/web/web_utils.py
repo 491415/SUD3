@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import time
@@ -23,11 +24,11 @@ def _check_api_availability(response: Response) -> bool:
     for attempt in range(retries):
         try:
             logging.info(
-                f"Provjera dostupnosti SUDREG API-a {env('SUDREG_URL')}: {attempt + 1}/{retries}..."
+                f"Provjera dostupnosti SUDREG API-a {response.url}: {attempt + 1}/{retries}..."
             )
 
             if response.status_code == 200:
-                logging.info(f"SUDREG API {env('SUDREG_URL')} je dostupan.")
+                logging.info(f"SUDREG API {response.url} je dostupan.")
                 logging.info("-" * 100)
                 return True
             elif response.status_code == 503:
@@ -85,6 +86,43 @@ def _report_connection_error(exception: str) -> None:
         error_msg = f"Nije moguće pristupiti SUDREG API-u: {exception}"
         logging.error({error_msg})
         raise RuntimeError(error_msg)
+
+
+def check_api_definition():
+    """
+    Check if Sudreg API definition changed by downloading the current definition
+    and comparing it with the local one saved in /conf folder. If there is an
+    updated API definition it will be saved to /conf folder. As the API definition
+    is almost 20.000 lines long JSON file, old and new files can be efficiently
+    compared in Notepad++ using Compare plug-in for example.
+    """
+    # Provjera i preuzimanje najnovije verzije SUDREG API konfiguracijskog filea
+    try:
+        with requests.get(env("SUDREG_API_DEF_URL"), verify=True, timeout=60) as r:
+            _check_api_availability(r)
+    except OSError as e:
+        _report_connection_error(str(e))
+
+    # Čitanje lokalne verzije SUDREG API konfiguracije
+    with open(env("SUDREG_API_DEF_PATH"), "r", encoding="utf8") as file:
+        # Formatiranje lokalne verzije SUDREG API konfiguracije
+        local_API_definition = json.dumps(json.load(file), indent=2, ensure_ascii=False)
+
+    # Formatiranje online verzije SUDREG API konfiguracije
+    online_API_definition = json.dumps(r.json(), indent=2, ensure_ascii=False)
+
+    # Usporedba lokalne i preuzete verzije SUDREG API konfiguracije
+    if local_API_definition == online_API_definition:
+        logging.info("Lokalni SUDREG API konfiguracijski file je up to date.")
+    else:
+        logging.warning(f"Postoji nova verzija SUDREG API konfiguracijskog filea.")
+        # Spremanje nove verzije SUDREG API konfiguracijskog filea na mjesto staroga
+        # sa ažuriranim nazivom (dodaje se '_new' u naziv)
+        with open(env("SUDREG_API_DEF_NEW_PATH"), "w", encoding="utf8") as f:
+            f.write(online_API_definition)
+        logging.info(
+            f"Ažurirana verzija SUDREG API konfiguracijskog filea spremljena na lokaciju: {env('SUDREG_API_DEF_NEW_PATH')}"
+        )
 
 
 def _get_oauth_token() -> Dict:
@@ -153,4 +191,4 @@ def get_sudreg_api_header() -> Dict:
 
 if __name__ == "__main__":
     log = Logger(datetime.now().strftime(env("DATE_FORMAT")), __file__)
-    print(get_sudreg_api_header())
+    check_api_definition()
