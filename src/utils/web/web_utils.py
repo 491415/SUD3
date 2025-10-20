@@ -10,6 +10,7 @@ from environs import env
 from requests import Response
 
 from src.logger.Logger import Logger
+from src.utils.send_mail import send_warning_notification
 
 
 def _check_api_availability(response: Response) -> bool:
@@ -88,13 +89,10 @@ def _report_connection_error(exception: str) -> None:
         raise RuntimeError(error_msg)
 
 
-def check_api_definition():
+def check_api_definition() -> None:
     """
-    Check if Sudreg API definition changed by downloading the current definition
-    and comparing it with the local one saved in /conf folder. If there is an
-    updated API definition it will be saved to /conf folder. As the API definition
-    is almost 20.000 lines long JSON file, old and new files can be efficiently
-    compared in Notepad++ using Compare plug-in for example.
+    Provjera jesu li lokalni i web SUDREG API konfiguracijski file jednaki.
+    Ako postoje razlike, kreira se novi SUDREG API konfiguracijski file na mjestu staroga.
     """
     # Provjera i preuzimanje najnovije verzije SUDREG API konfiguracijskog filea
     try:
@@ -117,12 +115,13 @@ def check_api_definition():
     else:
         logging.warning(f"Postoji nova verzija SUDREG API konfiguracijskog filea.")
         # Spremanje nove verzije SUDREG API konfiguracijskog filea na mjesto staroga
-        # sa ažuriranim nazivom (dodaje se '_new' u naziv)
-        with open(env("SUDREG_API_DEF_NEW_PATH"), "w", encoding="utf8") as f:
+        with open(env("SUDREG_API_DEF_PATH"), "w", encoding="utf8") as f:
             f.write(online_API_definition)
         logging.info(
-            f"Ažurirana verzija SUDREG API konfiguracijskog filea spremljena na lokaciju: {env('SUDREG_API_DEF_NEW_PATH')}"
+            f"Ažurirana verzija SUDREG API konfiguracijskog filea."
         )
+        # Slanje maila upozorenja da je došlo do promjene SUDREG API konfiguracijskog filea
+        send_warning_notification()
 
 
 def _get_oauth_token() -> Dict:

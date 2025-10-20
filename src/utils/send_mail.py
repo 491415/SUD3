@@ -1,3 +1,4 @@
+import logging
 import os
 import smtplib
 from email import encoders
@@ -56,3 +57,34 @@ def send_mail(
     text = msg.as_string()
     server.sendmail(from_address, to_address, text)
     server.quit()
+
+
+def send_warning_notification() -> None:
+    """
+    Slanje mail obavijesti o promjeni SUDREG API konfiguracijskog filea.
+    """
+    subject = f"⚠ {env('APP_NAME')} Promjena SUDREG API konfiguracijskog filea"
+
+    body = f"""
+        {env('APP_NAME')} upozorenje!!!
+        ========================================
+
+        Došlo je do promjene SUDREG API konfiguracijskog filea.
+        
+        ========================================
+        Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
+        """
+
+    try:
+        send_mail(
+            v_subject=subject,
+            v_body=body,
+            to_address=env("ADMIN_MAIL_ADDRESS"),
+            log_dir="",
+            log_name="",
+            send_log_file=False,
+        )
+    except Exception as email_error:
+        logging.warning(
+            f"Nije uspjelo slanje obavijesti o upozorenju: {email_error}"
+        )

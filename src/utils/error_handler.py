@@ -169,6 +169,7 @@ class ScriptExecutionWrapper:
             Slijedeći koraci:
             1. Pogledajte log file u privitku za detalje
 
+            ========================================
             Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             Logovi se nalaze na lokaciji: {log_dir if log_dir else 'Nije definirano'}
             """
@@ -208,6 +209,7 @@ class ScriptExecutionWrapper:
             Skripta: {self.script_name}
             Vrijeme završetka: {timestamp}
 
+            ========================================
             Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             """
 
