@@ -1,6 +1,5 @@
 import json
 import logging
-import os
 import time
 from datetime import datetime, timedelta
 from typing import Dict
@@ -9,9 +8,12 @@ import requests
 from environs import env
 from requests import Response
 
-from src.logger.Logger import Logger
 from src.utils.send_mail import send_warning_notification
 
+# Varijabla na razini modula za 0auth2 token
+_sudreg_access_token = {}
+# Flag da se API definicija provjeri samo jednom po pokretanju
+_api_definition_checked = False
 
 def _check_api_availability(response: Response) -> bool:
     """
@@ -95,6 +97,14 @@ def check_api_definition() -> None:
     Ako postoje razlike, kreira se novi SUDREG API konfiguracijski file na mjestu staroga.
     """
     # Provjera i preuzimanje najnovije verzije SUDREG API konfiguracijskog filea
+    global _api_definition_checked
+
+    # Provjeri samo jednom po pokretanju programa
+    if _api_definition_checked:
+        return
+
+    logging.info("Provjeravam SUDREG API definiciju...")
+
     try:
         with requests.get(env("SUDREG_API_DEF_URL"), verify=True, timeout=60) as r:
             _check_api_availability(r)
@@ -123,6 +133,8 @@ def check_api_definition() -> None:
         # Slanje maila upozorenja da je došlo do promjene SUDREG API konfiguracijskog filea
         send_warning_notification()
 
+    _api_definition_checked = True
+
 
 def _get_oauth_token() -> Dict:
     """
@@ -139,7 +151,6 @@ def _get_oauth_token() -> Dict:
                 env("SUDREG_TOKEN_URL"),
                 data={"grant_type": "client_credentials"},
                 auth=(env("SUDREG_CLIENT_ID"), env("SUDREG_CLIENT_SECRET"),),
-                proxies={'http': os.environ['HTTP_PROXY']},
                 verify=True,
                 timeout=60
         ) as response:
@@ -168,26 +179,38 @@ def get_sudreg_api_header() -> Dict:
     Raises:
         ValueError: Ako polje 'expiration_time' ne postoji u access tokenu.
     """
-    sudreg_access_token = {}
+    global _sudreg_access_token
 
-    if len(sudreg_access_token) == 0:
-        sudreg_access_token = _get_oauth_token()
+    # Provjeri API definiciju prvi put kad se pozove ova funkcija
+    check_api_definition()
 
-    if "expiration_time" in sudreg_access_token:
-        if datetime.now() > datetime.fromisoformat(sudreg_access_token["expiration_time"]):
-            logging.info("OAuth2 token je istekao. Dohvaćam novi token...")
-            sudreg_access_token = _get_oauth_token()
-    else:
-        error_msg = "Polje 'expiration_time' ne postoji u access token dictionaryu."
-        logging.error(error_msg)
-        raise ValueError(error_msg)
+    # Provjera postoji li token i je li još uvijek valjan
+    if len(_sudreg_access_token) > 0 and "expiration_time" in _sudreg_access_token:
+        # Dodajemo 5 minuta buffer prije isteka tokena za sigurnost
+        expiration_with_buffer = datetime.fromisoformat(_sudreg_access_token["expiration_time"]) - timedelta(minutes=5)
+
+        if datetime.now() < expiration_with_buffer:
+            return {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {_sudreg_access_token['access_token']}",
+            }
+        else:
+            logging.info("OAuth2 token je istekao ili je blizu isteka. Dohvaćam novi token...")
+
+    # Dohvaćanje novog tokena ako ne postoji ili je istekao
+    _sudreg_access_token = _get_oauth_token()
 
     return {
         "Content-Type": "application/json",
-        "Authorization": f"Bearer {sudreg_access_token['access_token']}",
+        "Authorization": f"Bearer {_sudreg_access_token['access_token']}",
     }
 
 
-if __name__ == "__main__":
-    log = Logger(datetime.now().strftime(env("DATE_FORMAT")), __file__)
-    check_api_definition()
+def reset_sudreg_token() -> None:
+    """
+    Briše trenutni OAuth2 token iz memorije.
+    Za testiranje ili forsiranje dohvaćanja novog tokena.
+    """
+    global _sudreg_access_token
+    _sudreg_access_token = {}
+    logging.info("OAuth2 token je resetiran.")
