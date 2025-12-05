@@ -298,11 +298,11 @@ class OracleDBConn:
         if not self.logger or not self.logger.log_file_path:
             return "", ""
 
-        # log_file_path izgleda kao: C:\SUD2\src\log\SUD2_26.09.2025_12-30-45.log
+        # log_file_path izgleda kao: C:\SUD3\src\log\SUD3_26.09.2025_12-30-45.log
         # Potrebno je razdvojiti direktorij i naziv log filea.
         log_path = self.logger.log_file_path
-        log_directory = str(log_path.parent)  # "C:\SUD2\src\log"
-        log_filename = log_path.name  # "SUD2_26.09.2025_12-30-45.log"
+        log_directory = str(log_path.parent)  # "C:\SUD3\src\log"
+        log_filename = log_path.name  # "SUD3_26.09.2025_12-30-45.log"
 
         return log_directory, log_filename
 

@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "SUD2"
+name = "SUD3"
 version = "1.0.0"
-description = "Sudski registar v2 - skripte za preuzimanje podataka iz sudskog registra RH."
+description = "Sudski registar v3 - skripte za preuzimanje podataka iz sudskog registra RH."
 authors = [
     {name = "Dino Kralj", email = "dino.kralj@hnb.hr"}
 ]
@@ -13,14 +13,14 @@ classifiers = [
   "Intended Audience :: Developers",
   "License :: OSI Approved :: MIT License",
   "Natural Language :: Croatian",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 dependencies = [
     "environs>=14.3.0",
@@ -37,13 +37,13 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.hnb.hr/dkralj/SUD2"
-Repository = "https://github.hnb.hr/dkralj/SUD2"
-Documentation = "https://github.hnb.hr/dkralj/SUD2/README.md"
+Homepage = "https://github.hnb.hr/dkralj/SUD3"
+Repository = "https://github.hnb.hr/dkralj/SUD3"
+Documentation = "https://github.hnb.hr/dkralj/SUD3/README.md"
 
 [tool.black]
 line-length = 88
-target-version = ['py39']
+target-version = ['py310']
 include = '\.pyi?$'
 extend-exclude = '''
 /(
@@ -55,7 +55,7 @@ extend-exclude = '''
 '''
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -70,7 +70,8 @@ strict_equality = true
 
 [tool.ruff]
 line-length = 88
-target-version = "py39"
+target-version = "py310"
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings

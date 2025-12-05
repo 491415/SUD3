@@ -7,7 +7,7 @@ from typing import Any, Dict, Tuple
 from environs import env
 
 from src.logger.Logger import Logger
-from src.models.SudregTables import SudregTables
+from src.models import SudregTables
 
 
 def _parse_column_description(description: str) -> Tuple[str, str]:
@@ -152,13 +152,13 @@ def generate_ddl(api_definition_file: Path) -> str:
         raise ValueError(error_msg)
 
     schemas = data["components"]["schemas"]
-    included_tables = SudregTables.TABLES.value["included"]
+    table_names = SudregTables.SUDREG_TABLE_MAPPING.keys()
 
     all_table_ddl = []
     all_comment_ddl = []
 
     for table_name, table_details in schemas.items():
-        if table_name in included_tables:
+        if table_name in table_names:
             try:
                 table_ddl, comment_ddl = _generate_table_ddl(table_name, table_details)
                 all_table_ddl.append(table_ddl)
