@@ -34,6 +34,7 @@ class ScriptExecutionWrapper:
         """
         self.script_name = script_name
         self.admin_mail = env("ADMIN_MAIL_ADDRESS")
+        self.receivers = env.list("RECEIVERS_MAIL_ADDRESS")
         self.execution_successful = True
         self.error_details = None
 
@@ -58,7 +59,6 @@ class ScriptExecutionWrapper:
             # Pokretanje glavnog dijela koda za učitavanje podataka sa diska.
             main_function()
             self.execution_successful = True
-            self._send_success_notification()
 
         except KeyboardInterrupt:
             # Ne šalje se mail ako korisnik prekine izvršavanje skripte.
@@ -118,6 +118,12 @@ class ScriptExecutionWrapper:
                     log_dir=log_dir,
                     log_name=log_name,
                 )
+            elif self.execution_successful:
+                self._send_success_notification(
+                    context=context,
+                    log_dir=log_dir,
+                    log_name=log_name,
+                )
 
         return self.execution_successful
 
@@ -157,7 +163,7 @@ class ScriptExecutionWrapper:
         subject = f"❌ {env('APP_NAME')} Skripta Greška: {self.script_name}"
 
         body = f"""
-            {env('APP_NAME')} skripta greška prilikom izvršavanja
+            {env('APP_NAME')} skripta greška prilikom izvršavanja!
             ========================================
 
             Skripta: {self.script_name}
@@ -171,7 +177,6 @@ class ScriptExecutionWrapper:
 
             ========================================
             Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
-            Logovi se nalaze na lokaciji: {log_dir if log_dir else 'Nije definirano'}
             """
 
         try:
@@ -194,33 +199,73 @@ class ScriptExecutionWrapper:
 
             logging.error(traceback.format_exc())
 
-    def _send_success_notification(self) -> None:
+    def _send_success_notification(self, context: ScriptContext, log_dir: Optional[str], log_name: Optional[str]) -> None:
         """
         Šalje obavijesti o uspješnom izvršavanju skripte.
+        Uključuje statistiku o tablicama i greškama (ako ih ima).
+
+        Args:
+            context (ScriptContext): Podaci iz pokrenute skripte za mail.
+            log_dir (Optional[str]): Direktorij u kojemu se nalaze log fileovi.
+            log_name (Optional[str]): Naziv log filea.
         """
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
-        subject = f"✅ {env('APP_NAME')} Skripta Izvršena"
+        # Provjeri ima li grešaka na pojedinim tablicama
+        if hasattr(context, "table_errors") and context.table_errors:
+            subject = f"⚠️ {env('APP_NAME')} Izvršena sa Greškama"
 
-        body = f"""
-            {env('APP_NAME')} skripta uspješno izvršena
-            ========================================
+            error_list = "\n".join([
+                f"  - {error['table_name']}: {error['error_message']}"
+                for error in context.table_errors
+            ])
+
+            body = f"""
+            {env('APP_NAME')} skripta izvršena s greškama na pojedinim tablicama!
+            ====================================================================
 
             Skripta: {self.script_name}
             Vrijeme završetka: {timestamp}
 
-            ========================================
+            Statistika:
+            - Ukupno tablica: {context.total_tables}
+            - Uspješne tablice: {context.successful_tables}
+            - Neuspješne tablice: {len(context.table_errors)}
+            - Ukupno zapisanih redova: {context.total_rows:,}
+
+            Greške po tablicama:
+            {error_list}
+
+            ====================================================================
             Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             """
+        else:
+            subject = f"✅ {env('APP_NAME')} Skripta Uspješno Izvršena"
+
+            body = f"""
+                {env('APP_NAME')} skripta uspješno izvršena!
+                ===========================================
+    
+                Skripta: {self.script_name}
+                Vrijeme završetka: {timestamp}
+                
+                Statistika:
+                - Ukupno tablica: {context.total_tables}
+                - Sve tablice uspješno preuzete i zapisane u bazu podataka!
+                - Ukupno zapisanih redova: {context.total_rows:,}
+    
+                ===========================================
+                Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
+                """
 
         try:
             send_mail(
                 v_subject=subject,
                 v_body=body,
-                to_address=self.admin_mail,
-                log_dir="",
-                log_name="",
-                send_log_file=False,
+                to_address=self.receivers,
+                log_dir=log_dir or "",
+                log_name=log_name or "",
+                send_log_file=True,
             )
         except Exception as email_error:
             logging.warning(
