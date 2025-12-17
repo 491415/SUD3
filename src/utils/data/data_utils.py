@@ -24,7 +24,7 @@ def create_dto_from_data(dto_class: type[BaseModel], data: dict) -> BaseModel:
     return dto_class(**data)
 
 
-def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel]) -> tuple[bool, str, int]:
+def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel], target_table=None) -> tuple[bool, str, int]:
     """
     Procesira pojdeinu tablicu i vraća status, eventualni error i broj zapisanih redaka.
 
@@ -32,16 +32,25 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
         conn (OracleDBConn): Konekcija na bazu podataka.
         table_name (str): Tablica koja se procesira.
         dto_class (type[BaseModel]): DTO objekt tablice koja se procesira.
+        target_table (str, optional): Target tablica za punjenje (npr. "SUD_A" ili "SUD_B").
+                                      Ako nije specificirana, koristi se bazno ime.
 
     Returns:
         tuple[bool, str, int]: (success, error_message, inserted_rows)
     """
+    db_table_name = dto_name_to_table_name(dto_class.__name__)
+    actual_table = target_table if target_table else table_name
+
     limit = env.int("LIMIT")
     offset = env.int("OFFSET")
     inserted_rows = 0
 
-    db_table_name = dto_name_to_table_name(dto_class.__name__)
     url = f"{env('SUDREG_URL')}/{table_name}"
+
+    # Tablica u koju se zapisuju podaci
+    if target_table and target_table != db_table_name:
+        logging.info(f"Target tablica: {actual_table}")
+        logging.info("-" * 100)
 
     try:
         while True:
@@ -73,7 +82,7 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
 
             list_dto = [create_dto_from_data(dto_class, line) for line in data]
             params_list = [dto.model_dump(by_alias=True) for dto in list_dto]
-            insert_query = generate_insert_query(db_table_name, dto_class)
+            insert_query = generate_insert_query(actual_table, dto_class)
 
             inserted_rows += conn.execute_many(insert_query, params_list=params_list)
 
@@ -91,10 +100,10 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
         logging.error(f"✗ Tablica {table_name} - {error_msg}")
 
         # Pokušaj truncate tablicu zbog greške
-        logging.warning(f"Pokrećem truncate tablice {db_table_name} zbog greške...")
+        logging.warning(f"Pokrećem truncate tablice {actual_table} zbog greške...")
         try:
             truncate_table(conn, db_table_name)
-            logging.info(f"Truncate tablice {db_table_name} uspješan")
+            logging.info(f"Truncate tablice {actual_table} uspješan")
         except Exception as truncate_error:
             truncate_msg = f"KRITIČNA GREŠKA: Truncate nije uspio: {truncate_error}"
             logging.error(truncate_msg)
