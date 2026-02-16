@@ -1,12 +1,26 @@
 import logging
 
-import oracledb
-from datetime import datetime
-from typing import Literal, Optional, List, Dict
+from environs import env
 
 from src.database.db_connection import OracleDBConn
 from src.models.SudregTables import get_model_for_table
 from src.utils.db.db_utils import dto_name_to_table_name
+
+
+def get_inactive_table_name(naziv_tablice_json: str, inactive_sufix: str) -> str:
+    """
+    Vraća naziv sa sufixom trenutno neaktivne tablice.
+
+    Args:
+        naziv_tablice_json (str): Naziv tablice bez sufixa.
+        inactive_sufix (str): Neaktivan sufix.
+
+    Returns:
+        str: Puni naziv neaktivne tablice sa sufixom.
+    """
+    db_table_name = dto_name_to_table_name(get_model_for_table(naziv_tablice_json).__name__)
+
+    return f"{db_table_name}_{inactive_sufix}"
 
 
 class TableManager:
@@ -34,17 +48,11 @@ class TableManager:
             naziv_tablice_json (str): Naziv tablice bez sufixa (iz .json filea).
 
         Returns:
-            'A' ili 'B' - aktivan sufiks
+            str: 'A' ili 'B' - aktivan sufiks
         """
         db_table_name = dto_name_to_table_name(get_model_for_table(naziv_tablice_json).__name__)
 
-        query = """
-        SELECT AKTIVNI_SUFFIX 
-        FROM SUD3_AKTIVNA_TABLICA 
-        WHERE NAZIV_TABLICE = :naziv_tablice
-        """
-
-        result = self.conn.execute_query(query, {"naziv_tablice": db_table_name})
+        result = self.conn.execute_query(env("GET_AKTIVNI_SUFIX"), {"naziv_tablice": db_table_name})
 
         if result and len(result) > 0:
             return result[0][0]
@@ -61,7 +69,7 @@ class TableManager:
             naziv_tablice_json (str): Naziv tablice bez sufixa (iz .json konf filea).
 
         Returns:
-            'A' ili 'B' - neaktivan sufiks
+            str: 'A' ili 'B' - neaktivan sufiks
         """
         active = self.get_active_suffix(naziv_tablice_json)
 
@@ -75,18 +83,9 @@ class TableManager:
             naziv_tablice (str): Naziv tablice bez sufixa.
             active_suffix (str): Sufix tablice ('A' ili 'B').
         """
-
-        insert_sql = """
-        INSERT INTO SUD3_AKTIVNA_TABLICA 
-        (NAZIV_TABLICE, AKTIVNI_SUFFIX, VRIJEME, STATUS)
-        VALUES (:naziv_tablice, :aktivni_sufix, :vrijeme, :status)
-        """
-
-        self.conn.execute_query(insert_sql, {
+        self.conn.execute_query(env("INSERT_AKTIVNI_SUFIX"), {
             "naziv_tablice": naziv_tablice,
-            "aktivni_sufix": active_suffix,
-            "vrijeme": datetime.now(),
-            "status": "SUCCESS"
+            "aktivni_sufix": active_suffix
         })
 
         logging.info(f"Inicijalizirano stanje za {naziv_tablice}: aktivan sufiks = {active_suffix}")
@@ -106,25 +105,15 @@ class TableManager:
             naziv_tablice (str): Naziv tablice bez sufixa.
 
         Returns:
-            Novi aktivan sufiks (ili stari ako nije prebačeno)
+            str: Novi aktivan sufiks (ili stari ako nije prebačeno)
         """
         current_active = "A" if inactive_suffix == "B" else "B"
 
         # Prebacivanje na drugu verziju
         new_active = "B" if current_active == "A" else "A"
 
-        update_sql = """
-        UPDATE SUD3_AKTIVNA_TABLICA
-        SET AKTIVNI_SUFFIX = :novi_suffix,
-            VRIJEME = :vrijeme,
-            STATUS = :status
-        WHERE NAZIV_TABLICE = :naziv_tablice
-        """
-
-        self.conn.execute_query(update_sql, {
+        self.conn.execute_query(env("UPDATE_AKTIVNI_SUFIX"), {
             "novi_suffix": new_active,
-            "vrijeme": datetime.now(),
-            "status": "SUCCESS",
             "naziv_tablice": naziv_tablice
         })
 
@@ -132,7 +121,8 @@ class TableManager:
 
         return new_active
 
-    def get_active_table_name(self, naziv_tablice_json: str, inactive_sufix: str) -> str:
+    @staticmethod
+    def get_active_table_name(naziv_tablice_json: str, inactive_sufix: str) -> str:
         """
         Vraća naziv sa sufixom trenutno aktivne tablice.
 
@@ -141,24 +131,9 @@ class TableManager:
             inactive_sufix (str): Neaktivan sufix.
 
         Returns:
-            Puni naziv aktivne tablice sa sufixom.
+            str: Puni naziv aktivne tablice sa sufixom.
         """
         active_suffix = "A" if inactive_sufix == "B" else "B"
         db_table_name = dto_name_to_table_name(get_model_for_table(naziv_tablice_json).__name__)
 
         return f"{db_table_name}_{active_suffix}"
-
-    def get_inactive_table_name(self, naziv_tablice_json: str, inactive_sufix: str) -> str:
-        """
-        Vraća naziv sa sufixom trenutno neaktivne tablice.
-
-        Args:
-            naziv_tablice_json (str): Naziv tablice bez sufixa.
-            inactive_sufix (str): Neaktivan sufix.
-
-        Returns:
-            Puni naziv neaktivne tablice sa sufixom.
-        """
-        db_table_name = dto_name_to_table_name(get_model_for_table(naziv_tablice_json).__name__)
-
-        return f"{db_table_name}_{inactive_sufix}"

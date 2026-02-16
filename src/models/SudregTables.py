@@ -1,148 +1,149 @@
 from pydantic import BaseModel
 
-from src.schemas.VrstaKapitalaDTO import VrstaKapitalaDTO
-from src.schemas.VrstaOblikaVlasnistvaDTO import VrstaOblikaVlasnistvaDTO
-from src.schemas.VrstaOvlastiDTO import VrstaOvlastiDTO
-from src.schemas.EmailAdresaPodruzniceDTO import EmailAdresaPodruzniceDTO
-from src.schemas.FunkcijaClanaSubjektaDTO import FunkcijaClanaSubjektaDTO
-from src.schemas.FunkcijaOsobeDTO import FunkcijaOsobeDTO
-from src.schemas.GFIDTO import GFIDTO
-from src.schemas.GrupaFunkcijaDTO import GrupaFunkcijaDTO
-from src.schemas.GrupaVrstaUpisaDTO import GrupaVrstaUpisaDTO
-from src.schemas.JezikDTO import JezikDTO
-from src.schemas.NacionalnaKlasaDjelDTO import NacionalnaKlasaDjelDTO
-from src.schemas.NazivPodruzniceDTO import NazivPodruzniceDTO
-from src.schemas.ObjavaPriopcenjaDTO import ObjavaPriopcenjaDTO
-from src.schemas.OsobaDTO import OsobaDTO
-from src.schemas.OsobaOvlastDTO import OsobaOvlastDTO
-from src.schemas.OstaloPodaciDTO import OstaloPodaciDTO
-from src.schemas.OstaloTekstDTO import OstaloTekstDTO
-from src.schemas.PartnerStatusniPostupakDTO import PartnerStatusniPostupakDTO
-from src.schemas.PodruznicaDTO import PodruznicaDTO
-from src.schemas.PravniSljednikDTO import PravniSljednikDTO
-from src.schemas.PromjeneDTO import PromjeneDTO
-from src.schemas.SjedistePodruzniceDTO import SjedistePodruzniceDTO
-from src.schemas.SkraceniNazivPodruzniceDTO import SkraceniNazivPodruzniceDTO
-from src.schemas.SkupnaOvlastDTO import SkupnaOvlastDTO
-from src.schemas.SnapshotsDTO import SnapshotsDTO
-from src.schemas.StatusDTO import StatusDTO
-from src.schemas.StatusniPostupakDTO import StatusniPostupakDTO
-from src.schemas.SubjektDTO import SubjektDTO
-from src.schemas.SudDTO import SudDTO
-from src.schemas.UpisDTO import UpisDTO
-from src.schemas.UpisVrstaUpisaDTO import UpisVrstaUpisaDTO
-from src.schemas.ValutaDTO import ValutaDTO
-from src.schemas.VrstaClanaSubjektaDTO import VrstaClanaSubjektaDTO
-from src.schemas.VrstaFunkcijeDTO import VrstaFunkcijeDTO
-from src.schemas.VrstaGFIDokumentaDTO import VrstaGFIDokumentaDTO
-from src.schemas.VrstaOsobeDTO import VrstaOsobeDTO
-from src.schemas.VrstaPorijeklaKapitalaDTO import VrstaPorijeklaKapitalaDTO
-from src.schemas.VrstaPostupkaDTO import VrstaPostupkaDTO
-from src.schemas.VrstaPravnogOblikaDTO import VrstaPravnogOblikaDTO
-from src.schemas.VrstaPrilogaDTO import VrstaPrilogaDTO
-from src.schemas.VrstaRazlogaNastajanjaDTO import VrstaRazlogaNastavljanjaDTO
-from src.schemas.VrstaRazlogaPrestankaDTO import VrstaRazlogaPrestankaDTO
-from src.schemas.VrstaStPostupkaDTO import VrstaStPostupkaDTO
-from src.schemas.VrstaZabiljezbeDTO import VrstaZabiljezbeDTO
-from src.schemas.DrzavaDTO import DrzavaDTO
-from src.schemas.BrisPravniOblikDTO import BrisPravniOblikDTO
-from src.schemas.BrisRegistarDTO import BrisRegistarDTO
-from src.schemas.ClanSubjektaDTO import ClanSubjektaDTO
-from src.schemas.ClanSubjektaOvlastDTO import ClanSubjektaOvlastDTO
-from src.schemas.ClanSubjektaUdioDTO import ClanSubjektaUdioDTO
-from src.schemas.ClanSubjektaUlogDTO import ClanSubjektaUlogDTO
+from src.schemas.BrisPravniObliciDTO import BrisPravniObliciDTO
+from src.schemas.BrisRegistriDTO import BrisRegistriDTO
+from src.schemas.ClanoviSubjekataDTO import ClanoviSubjekataDTO
 from src.schemas.CountsDTO import CountsDTO
-from src.schemas.DjelatnostPodruzniceDTO import DjelatnostPodruzniceDTO
-from src.schemas.DokumentDTO import DokumentDTO
+from src.schemas.DjelatnostiPodruznicaDTO import DjelatnostiPodruznicaDTO
+from src.schemas.DokumentiDTO import DokumentiDTO
+from src.schemas.DrzaveDTO import DrzaveDTO
 from src.schemas.EmailAdreseDTO import EmailAdreseDTO
-from src.schemas.EvidencijskaDjelatnostDTO import EvidencijskaDjelatnostDTO
-from src.schemas.InozemniRegistarDTO import InozemniRegistarDTO
-from src.schemas.PostupakDTO import PostupakDTO
-from src.schemas.PravniOblikDTO import PravniOblikDTO
-from src.schemas.PredmetPoslovanjaDTO import PredmetPoslovanjaDTO
-from src.schemas.PretezitaDjelatnostDTO import PretezitaDjelatnostDTO
-from src.schemas.PrijevodSkracenaTvrtkaDTO import PrijevodSkracenaTvrtkaDTO
-from src.schemas.PrijevodTvrtkaDTO import PrijevodTvrtkaDTO
-from src.schemas.RazlogNeaktivnostiDTO import RazlogNeaktivnostiDTO
-from src.schemas.SjedisteDTO import SjedisteDTO
-from src.schemas.SkracenaTvrtkaDTO import SkracenaTvrtkaDTO
-from src.schemas.TemeljniKapitalDTO import TemeljniKapitalDTO
-from src.schemas.TvrtkaDTO import TvrtkaDTO
-from src.schemas.VrstaUpisaDTO import VrstaUpisaDTO
-from src.schemas.ZabijezbaDTO import ZabiljezbaDTO
-
+from src.schemas.EmailAdresePodruznicaDTO import EmailAdresePodruznicaDTO
+from src.schemas.EvidencijskeDjelatnostiDTO import EvidencijskeDjelatnostiDTO
+from src.schemas.FunkcijeClanovaSubjekataDTO import FunkcijeClanovaSubjekataDTO
+from src.schemas.FunkcijeOsobaDTO import FunkcijeOsobaDTO
+from src.schemas.GFIDTO import GFIDTO
+from src.schemas.GrupeVrstaFunkcijaDTO import GrupeVrstaFunkcijaDTO
+from src.schemas.GrupeVrstaUpisaDTO import GrupeVrstaUpisaDTO
+from src.schemas.InozemniRegistriDTO import InozemniRegistriDTO
+from src.schemas.JeziciDTO import JeziciDTO
+from src.schemas.NacionalnaKlasifikacijaDjelatnostiDTO import (
+    NacionalnaKlasifikacijaDjelatnostiDTO,
+)
+from src.schemas.NaziviPodruznicaDTO import NaziviPodruznicaDTO
+from src.schemas.ObjavePriopcenjaDTO import ObjavePriopcenjaDTO
+from src.schemas.OsobeDTO import OsobeDTO
+from src.schemas.OstaliPodaciDTO import OstaliPodaciDTO
+from src.schemas.OstaliTekstoviDTO import OstaliTekstoviDTO
+from src.schemas.OvlastiClanovaSubjekataDTO import OvlastiClanovaSubjekataDTO
+from src.schemas.OvlastiOsobaDTO import OvlastiOsobaDTO
+from src.schemas.PartneriStatusnihPostupakaDTO import PartneriStatusnihPostupakaDTO
+from src.schemas.PodruzniceDTO import PodruzniceDTO
+from src.schemas.PostupciDTO import PostupciDTO
+from src.schemas.PravniObliciDTO import PravniObliciDTO
+from src.schemas.PravniSljedniciDTO import PravniSljedniciDTO
+from src.schemas.PredmetiPoslovanjaDTO import PredmetiPoslovanjaDTO
+from src.schemas.PreteziteDjelatnostiDTO import PreteziteDjelatnostiDTO
+from src.schemas.PrijevodiSkracenihTvrtkiDTO import PrijevodiSkracenihTvrtkiDTO
+from src.schemas.PrijevodiTvrtkiDTO import PrijevodiTvrtkiDTO
+from src.schemas.PromjeneDTO import PromjeneDTO
+from src.schemas.RazloziNeaktivnostiDTO import RazloziNeaktivnostiDTO
+from src.schemas.SjedistaDTO import SjedistaDTO
+from src.schemas.SjedistaPodruznicaDTO import SjedistaPodruznicaDTO
+from src.schemas.SkraceneTvrtkeDTO import SkraceneTvrtkeDTO
+from src.schemas.SkraceniNaziviPodruznicaDTO import SkraceniNaziviPodruznicaDTO
+from src.schemas.SkupneOvlastiDTO import SkupneOvlastiDTO
+from src.schemas.SnapshotsDTO import SnapshotsDTO
+from src.schemas.StatusiDTO import StatusiDTO
+from src.schemas.StatusniPostupciDTO import StatusniPostupciDTO
+from src.schemas.SubjektiDTO import SubjektiDTO
+from src.schemas.SudoviDTO import SudoviDTO
+from src.schemas.TemeljniKapitaliDTO import TemeljniKapitaliDTO
+from src.schemas.TvrtkeDTO import TvrtkeDTO
+from src.schemas.UdjeliClanovaSubjekataDTO import UdjeliClanovaSubjekataDTO
+from src.schemas.UloziClanovaSubjekataDTO import UloziClanovaSubjekataDTO
+from src.schemas.UpisiDTO import UpisiDTO
+from src.schemas.UpisiVrsteUpisaDTO import UpisiVrsteUpisaDTO
+from src.schemas.ValuteDTO import ValuteDTO
+from src.schemas.VrstaRazlogaNastajanjaDTO import VrsteRazlogaNastavljanjaDTO
+from src.schemas.VrsteClanovaSubjekataDTO import VrsteClanovaSubjekataDTO
+from src.schemas.VrsteFunkcijaDTO import VrsteFunkcijaDTO
+from src.schemas.VrsteGFIDokumenataDTO import VrsteGFIDokumenataDTO
+from src.schemas.VrsteKapitalaDTO import VrsteKapitalaDTO
+from src.schemas.VrsteOblikaVlasnistvaDTO import VrsteOblikaVlasnistvaDTO
+from src.schemas.VrsteOsobaDTO import VrsteOsobaDTO
+from src.schemas.VrsteOvlastiDTO import VrsteOvlastiDTO
+from src.schemas.VrstePorijeklaKapitalaDTO import VrstePorijeklaKapitalaDTO
+from src.schemas.VrstePostupakaDTO import VrstePostupakaDTO
+from src.schemas.VrstePravnihOblikaDTO import VrstePravnihOblikaDTO
+from src.schemas.VrstePrilogaDTO import VrstePrilogaDTO
+from src.schemas.VrsteRazlogaPrestankaDTO import VrsteRazlogaPrestankaDTO
+from src.schemas.VrsteStatusnihPostupakaDTO import VrsteStatusnihPostupakaDTO
+from src.schemas.VrsteUpisaDTO import VrsteUpisaDTO
+from src.schemas.VrsteZabiljezbiDTO import VrsteZabiljezbiDTO
+from src.schemas.ZabijezbaDTO import ZabiljezbeDTO
 
 SUDREG_TABLE_MAPPING = {
-    "bris_pravni_oblici": BrisPravniOblikDTO,
-    "bris_registri": BrisRegistarDTO,
-    "clanovi_subjekata": ClanSubjektaDTO,
+    "bris_pravni_oblici": BrisPravniObliciDTO,
+    "bris_registri": BrisRegistriDTO,
+    "clanovi_subjekata": ClanoviSubjekataDTO,
     "counts": CountsDTO,
-    "djelatnosti_podruznica": DjelatnostPodruzniceDTO,
-    "dokumenti": DokumentDTO,
-    "drzave": DrzavaDTO,
+    "djelatnosti_podruznica": DjelatnostiPodruznicaDTO,
+    "dokumenti": DokumentiDTO,
+    "drzave": DrzaveDTO,
     "email_adrese": EmailAdreseDTO,
-    "email_adrese_podruznica": EmailAdresaPodruzniceDTO,
-    "evidencijske_djelatnosti": EvidencijskaDjelatnostDTO,
-    "funkcije_clanova_subjekata": FunkcijaClanaSubjektaDTO,
-    "funkcije_osoba": FunkcijaOsobeDTO,
+    "email_adrese_podruznica": EmailAdresePodruznicaDTO,
+    "evidencijske_djelatnosti": EvidencijskeDjelatnostiDTO,
+    "funkcije_clanova_subjekata": FunkcijeClanovaSubjekataDTO,
+    "funkcije_osoba": FunkcijeOsobaDTO,
     "gfi": GFIDTO,
-    "grupe_vrsta_funkcija": GrupaFunkcijaDTO,
-    "grupe_vrsta_upisa": GrupaVrstaUpisaDTO,
-    "inozemni_registri": InozemniRegistarDTO,
-    "jezici": JezikDTO,
-    "nacionalna_klasifikacija_djelatnosti": NacionalnaKlasaDjelDTO,
-    "nazivi_podruznica": NazivPodruzniceDTO,
-    "objave_priopcenja": ObjavaPriopcenjaDTO,
-    "osobe": OsobaDTO,
-    "ostali_podaci": OstaloPodaciDTO,
-    "ostali_tekstovi": OstaloTekstDTO,
-    "ovlasti_clanova_subjekata": ClanSubjektaOvlastDTO,
-    "ovlasti_osoba": OsobaOvlastDTO,
-    "partneri_statusnih_postupaka": PartnerStatusniPostupakDTO,
-    "podruznice": PodruznicaDTO,
-    "postupci": PostupakDTO,
-    "pravni_oblici": PravniOblikDTO,
-    "pravni_sljednici": PravniSljednikDTO,
-    "predmeti_poslovanja": PredmetPoslovanjaDTO,
-    "pretezite_djelatnosti": PretezitaDjelatnostDTO,
-    "prijevodi_skracenih_tvrtki": PrijevodSkracenaTvrtkaDTO,
-    "prijevodi_tvrtki": PrijevodTvrtkaDTO,
+    "grupe_vrsta_funkcija": GrupeVrstaFunkcijaDTO,
+    "grupe_vrsta_upisa": GrupeVrstaUpisaDTO,
+    "inozemni_registri": InozemniRegistriDTO,
+    "jezici": JeziciDTO,
+    "nacionalna_klasifikacija_djelatnosti": NacionalnaKlasifikacijaDjelatnostiDTO,
+    "nazivi_podruznica": NaziviPodruznicaDTO,
+    "objave_priopcenja": ObjavePriopcenjaDTO,
+    "osobe": OsobeDTO,
+    "ostali_podaci": OstaliPodaciDTO,
+    "ostali_tekstovi": OstaliTekstoviDTO,
+    "ovlasti_clanova_subjekata": OvlastiClanovaSubjekataDTO,
+    "ovlasti_osoba": OvlastiOsobaDTO,
+    "partneri_statusnih_postupaka": PartneriStatusnihPostupakaDTO,
+    "podruznice": PodruzniceDTO,
+    "postupci": PostupciDTO,
+    "pravni_oblici": PravniObliciDTO,
+    "pravni_sljednici": PravniSljedniciDTO,
+    "predmeti_poslovanja": PredmetiPoslovanjaDTO,
+    "pretezite_djelatnosti": PreteziteDjelatnostiDTO,
+    "prijevodi_skracenih_tvrtki": PrijevodiSkracenihTvrtkiDTO,
+    "prijevodi_tvrtki": PrijevodiTvrtkiDTO,
     "promjene": PromjeneDTO,
-    "razlozi_neaktivnosti": RazlogNeaktivnostiDTO,
-    "sjedista": SjedisteDTO,
-    "sjedista_podruznica": SjedistePodruzniceDTO,
-    "skracene_tvrtke": SkracenaTvrtkaDTO,
-    "skraceni_nazivi_podruznica": SkraceniNazivPodruzniceDTO,
-    "skupne_ovlasti": SkupnaOvlastDTO,
+    "razlozi_neaktivnosti": RazloziNeaktivnostiDTO,
+    "sjedista": SjedistaDTO,
+    "sjedista_podruznica": SjedistaPodruznicaDTO,
+    "skracene_tvrtke": SkraceneTvrtkeDTO,
+    "skraceni_nazivi_podruznica": SkraceniNaziviPodruznicaDTO,
+    "skupne_ovlasti": SkupneOvlastiDTO,
     "snapshots": SnapshotsDTO,
-    "statusi": StatusDTO,
-    "statusni_postupci": StatusniPostupakDTO,
-    "subjekti": SubjektDTO,
-    "sudovi": SudDTO,
-    "temeljni_kapitali": TemeljniKapitalDTO,
-    "tvrtke": TvrtkaDTO,
-    "udjeli_clanova_subjekata": ClanSubjektaUdioDTO,
-    "ulozi_clanova_subjekata": ClanSubjektaUlogDTO,
-    "upisi": UpisDTO,
-    "upisi_vrste_upisa": UpisVrstaUpisaDTO,
-    "valute": ValutaDTO,
-    "vrste_clanova_subjekata": VrstaClanaSubjektaDTO,
-    "vrste_funkcija": VrstaFunkcijeDTO,
-    "vrste_gfi_dokumenata": VrstaGFIDokumentaDTO,
-    "vrste_kapitala": VrstaKapitalaDTO,
-    "vrste_oblika_vlasnistva": VrstaOblikaVlasnistvaDTO,
-    "vrste_osoba": VrstaOsobeDTO,
-    "vrste_ovlasti": VrstaOvlastiDTO,
-    "vrste_porijekla_kapitala": VrstaPorijeklaKapitalaDTO,
-    "vrste_postupaka": VrstaPostupkaDTO,
-    "vrste_pravnih_oblika": VrstaPravnogOblikaDTO,
-    "vrste_priloga": VrstaPrilogaDTO,
-    "vrste_razloga_nastavljanja": VrstaRazlogaNastavljanjaDTO,
-    "vrste_razloga_prestanka": VrstaRazlogaPrestankaDTO,
-    "vrste_statusnih_postupaka": VrstaStPostupkaDTO,
-    "vrste_upisa": VrstaUpisaDTO,
-    "vrste_zabiljezbi": VrstaZabiljezbeDTO,
-    "zabiljezbe": ZabiljezbaDTO
+    "statusi": StatusiDTO,
+    "statusni_postupci": StatusniPostupciDTO,
+    "subjekti": SubjektiDTO,
+    "sudovi": SudoviDTO,
+    "temeljni_kapitali": TemeljniKapitaliDTO,
+    "tvrtke": TvrtkeDTO,
+    "udjeli_clanova_subjekata": UdjeliClanovaSubjekataDTO,
+    "ulozi_clanova_subjekata": UloziClanovaSubjekataDTO,
+    "upisi": UpisiDTO,
+    "upisi_vrste_upisa": UpisiVrsteUpisaDTO,
+    "valute": ValuteDTO,
+    "vrste_clanova_subjekata": VrsteClanovaSubjekataDTO,
+    "vrste_funkcija": VrsteFunkcijaDTO,
+    "vrste_gfi_dokumenata": VrsteGFIDokumenataDTO,
+    "vrste_kapitala": VrsteKapitalaDTO,
+    "vrste_oblika_vlasnistva": VrsteOblikaVlasnistvaDTO,
+    "vrste_osoba": VrsteOsobaDTO,
+    "vrste_ovlasti": VrsteOvlastiDTO,
+    "vrste_porijekla_kapitala": VrstePorijeklaKapitalaDTO,
+    "vrste_postupaka": VrstePostupakaDTO,
+    "vrste_pravnih_oblika": VrstePravnihOblikaDTO,
+    "vrste_priloga": VrstePrilogaDTO,
+    "vrste_razloga_nastavljanja": VrsteRazlogaNastavljanjaDTO,
+    "vrste_razloga_prestanka": VrsteRazlogaPrestankaDTO,
+    "vrste_statusnih_postupaka": VrsteStatusnihPostupakaDTO,
+    "vrste_upisa": VrsteUpisaDTO,
+    "vrste_zabiljezbi": VrsteZabiljezbiDTO,
+    "zabiljezbe": ZabiljezbeDTO
 }
 
 
