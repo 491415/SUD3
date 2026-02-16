@@ -245,15 +245,15 @@ class ScriptExecutionWrapper:
             body = f"""
                 {env('APP_NAME')} skripta uspješno izvršena!
                 ===========================================
-    
+
                 Skripta: {self.script_name}
                 Vrijeme završetka: {timestamp}
-                
+
                 Statistika:
                 - Ukupno tablica: {context.total_tables}
                 - Sve tablice uspješno preuzete i zapisane u bazu podataka!
                 - Ukupno zapisanih redova: {context.total_rows:,}
-    
+
                 ===========================================
                 Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
                 """

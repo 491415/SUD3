@@ -70,7 +70,7 @@ def send_warning_notification() -> None:
         ========================================
 
         Došlo je do promjene SUDREG API konfiguracijskog filea.
-        
+
         ========================================
         Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
         """

@@ -1,8 +1,8 @@
 import logging
 import re
 
-from pydantic import BaseModel
 from environs import env
+from pydantic import BaseModel
 
 from src.database.db_connection import OracleDBConn
 
@@ -58,7 +58,7 @@ def dto_name_to_table_name(dto_class_name: str, prefix: str = f"{env('APP_NAME')
     """
     special_cases = {
         "GFIDTO": "GFI",
-        "VrstaGFIDokumentaDTO": "VRSTA_GFI_DOKUMENTA"
+        "VrsteGFIDokumenataDTO": "VRSTE_GFI_DOKUMENATA"
     }
 
     # Provjeri da li je special case
@@ -74,6 +74,25 @@ def dto_name_to_table_name(dto_class_name: str, prefix: str = f"{env('APP_NAME')
 
     # Dodaj prefiks
     return f"{prefix}{snake_case}"
+
+
+def create_public_synonym(conn: OracleDBConn, synonym_name: str, table_name: str) -> None:
+    """
+    Kreiranje public synonyma za tablicu.
+
+    Args:
+        conn (OracleDBConn): Konekcija na bazu podataka.
+        synonym_name (str): Naziv synonyma za tablicu.
+        table_name (str): Naziv tablice.
+    """
+    query = f"CREATE OR REPLACE PUBLIC SYNONYM {synonym_name} for {table_name}"
+
+    try:
+        conn.execute_query(query)
+        logging.info(f"Public synonym {synonym_name} za tablicu {table_name} uspješno kreiran.")
+    except Exception as e:
+        logging.error(f"Došlo je do greške prilikom kreiranja public synonyma za tablicu {table_name}: {e}")
+        raise
 
 
 def truncate_table(conn: OracleDBConn, table_name: str) -> None:
