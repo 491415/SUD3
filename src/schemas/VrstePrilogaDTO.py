@@ -1,15 +1,15 @@
-from typing import Any, Dict, List, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-T = TypeVar("T", bound="CountsDTO")
+T = TypeVar("T", bound="VrstePrilogaDTO")
 
 
-class CountsDTO(BaseModel):
+class VrstePrilogaDTO(BaseModel):
     """
-    Model za tablicu ukupnog broja dostupnih aktivnih i povijesnih redaka za sve metode/tablice.
+    Model za tablicu vrsta priloga (dokumenata)
 
-    JSON - counts (naziv tablice u .json konfiguracijskom fileu)
+    JSON - vrste_priloga (naziv tablice u .json konfiguracijskom fileu)
     """
 
     model_config = ConfigDict(
@@ -21,9 +21,10 @@ class CountsDTO(BaseModel):
         str_strip_whitespace=True,
     )
 
-    table_name: str = Field(..., min_length=1, max_length=128, description="Ime tablice/metode.")
-    count_svi: int = Field(..., ge=0, le=9_999_999_999_999_999_999, description="Ukupni broj svih redaka.")
-    count_aktivni: int = Field(..., ge=0, le=9_999_999_999_999_999_999, description="Ukupni broj aktivnih redaka.")
+    id: int = Field(..., ge=1, le=999_999_999_999, description="ID vrste priloga (primarni ključ).")
+    sifra: int = Field(..., ge=0, le=9_999, description="Šifra vrste priloga.")
+    naziv: str = Field(..., min_length=1, max_length=128, description="Naziv vrste priloga.")
+    status: Optional[int] = Field(None, le=9, description="Status podatka (vidi odjeljak Standardni mehanizam povijesnosti u uputama za razvojne inženjere).")
 
     def to_dict(self) -> Dict:
         return self.model_dump()
@@ -31,11 +32,11 @@ class CountsDTO(BaseModel):
     @classmethod
     def as_dict(cls, dto_list: List[T]) -> List[Dict[str, Any]]:
         """
-        Konverzija liste CountsDTO u listu dictonarya koristeći Pydantic model_dump
+        Konverzija liste VrstePrilogaDTO u listu dictonarya koristeći Pydantic model_dump
         za serijalizaciju svakog objekta.
 
         Args:
-            dto_list (List[T]): Lista CountsDTO objekata za konverziju.
+            dto_list (List[T]): Lista VrstePrilogaDTO objekata za konverziju.
 
         Returns:
             List[Dict[str, Any]]: Lista dictionarya objekata koji predstavljaju serijalizirane DTO objekte.

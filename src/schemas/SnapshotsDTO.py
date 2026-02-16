@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Optional, TypeVar, Dict, List, Any
+from typing import Any, Dict, List, Optional, TypeVar
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 T = TypeVar("T", bound="SnapshotsDTO")
+
 
 class SnapshotsDTO(BaseModel):
     """
@@ -21,7 +22,7 @@ class SnapshotsDTO(BaseModel):
         str_strip_whitespace=True,
     )
 
-    id: int = Field(..., ge=1, description="ID snapshot-a (snimke podataka) (primarni ključ).")
+    id: int = Field(..., ge=1, le=9_999_999_999, description="ID snapshot-a (snimke podataka) (primarni ključ).")
     timestamp: datetime = Field(..., description="Datum i vrijeme izrade snimke.")
     available_until: datetime = Field(..., description="Minimalni datum i vrijeme do kada će snimka sigurno biti dostupna.")
     staleness: int = Field(..., ge=0, le=999, description="Starost snimke (1 - zadnja, 2 - predzadnja, itd.).")

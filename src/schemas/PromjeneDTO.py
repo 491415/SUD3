@@ -1,9 +1,10 @@
 from datetime import datetime
-from typing import Dict, List, Any, TypeVar
+from typing import Any, Dict, List, TypeVar
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 T = TypeVar("T", bound="PromjeneDTO")
+
 
 class PromjeneDTO(BaseModel):
     """
@@ -21,10 +22,10 @@ class PromjeneDTO(BaseModel):
         str_strip_whitespace=True,
     )
 
-    mbs: int = Field(..., ge=1, le=999999999, description="Matični broj subjekta u sudskom registru.")
-    id: int = Field(..., ge=1, description="ID promjene (primarni ključ).")
+    mbs: int = Field(..., ge=1, le=999_999_999, description="Matični broj subjekta u sudskom registru.")
+    id: int = Field(..., ge=1, le=999_999_999_999, description="ID promjene (primarni ključ).")
     vrijeme: datetime = Field(..., description="Datum i vrijeme promjene.")
-    scn: int = Field(..., ge=0, description="Sistemski broj promjene - System change number (monotono rastuća sekvenca, koristi se za detekciju promjena).")
+    scn: int = Field(..., ge=0, le=9_999_999_999_999_999_999, description="Sistemski broj promjene - System change number (monotono rastuća sekvenca, koristi se za detekciju promjena).")
 
     def to_dict(self) -> Dict:
         return self.model_dump()

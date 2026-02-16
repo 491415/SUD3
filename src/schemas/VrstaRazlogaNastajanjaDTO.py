@@ -3,7 +3,7 @@ from pydantic import Field
 from src.schemas.base_schemas.ReferencaPodatkaDTO import ReferencaPodatkaDTO
 
 
-class VrstaRazlogaNastavljanjaDTO(ReferencaPodatkaDTO):
+class VrsteRazlogaNastavljanjaDTO(ReferencaPodatkaDTO):
     """
     Model za tablicu vrsta razloga nastavljanja subjekta
 

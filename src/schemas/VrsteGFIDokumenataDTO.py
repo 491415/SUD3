@@ -2,14 +2,14 @@ from typing import Any, Dict, List, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-T = TypeVar("T", bound="CountsDTO")
+T = TypeVar("T", bound="VrsteGFIDokumenataDTO")
 
 
-class CountsDTO(BaseModel):
+class VrsteGFIDokumenataDTO(BaseModel):
     """
-    Model za tablicu ukupnog broja dostupnih aktivnih i povijesnih redaka za sve metode/tablice.
+    Model za tablicu vrsta GFI dokumenata.
 
-    JSON - counts (naziv tablice u .json konfiguracijskom fileu)
+    JSON - vrste_gfi_dokumenata (naziv tablice u .json konfiguracijskom fileu)
     """
 
     model_config = ConfigDict(
@@ -21,9 +21,8 @@ class CountsDTO(BaseModel):
         str_strip_whitespace=True,
     )
 
-    table_name: str = Field(..., min_length=1, max_length=128, description="Ime tablice/metode.")
-    count_svi: int = Field(..., ge=0, le=9_999_999_999_999_999_999, description="Ukupni broj svih redaka.")
-    count_aktivni: int = Field(..., ge=0, le=9_999_999_999_999_999_999, description="Ukupni broj aktivnih redaka.")
+    vrsta: int = Field(..., ge=0, le=9, description="Šifra vrste GFI dokumenta (ujedno i primarni ključ).")
+    znacenje: str = Field(..., min_length=1, max_length=256, description="Naziv vrste GFI dokumenta.")
 
     def to_dict(self) -> Dict:
         return self.model_dump()
@@ -31,11 +30,11 @@ class CountsDTO(BaseModel):
     @classmethod
     def as_dict(cls, dto_list: List[T]) -> List[Dict[str, Any]]:
         """
-        Konverzija liste CountsDTO u listu dictonarya koristeći Pydantic model_dump
+        Konverzija liste VrsteGFIDokumenataDTO u listu dictonarya koristeći Pydantic model_dump
         za serijalizaciju svakog objekta.
 
         Args:
-            dto_list (List[T]): Lista CountsDTO objekata za konverziju.
+            dto_list (List[T]): Lista VrsteGFIDokumenataDTO objekata za konverziju.
 
         Returns:
             List[Dict[str, Any]]: Lista dictionarya objekata koji predstavljaju serijalizirane DTO objekte.

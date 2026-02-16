@@ -1,16 +1,15 @@
-from datetime import date
 from typing import Any, Dict, List, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
-T = TypeVar("T", bound="GFIDTO")
+T = TypeVar("T", bound="PodruzniceDTO")
 
 
-class GFIDTO(BaseModel):
+class PodruzniceDTO(BaseModel):
     """
-    Model za tablicu predanih godišnjih financijskih izvješća subjekata.
+    Model za tablicu podružnica subjekata.
 
-    JSON - gfi (naziv tablice u .json konfiguracijskom fileu)
+    JSON - podruznice (naziv tablice u .json konfiguracijskom fileu)
     """
 
     model_config = ConfigDict(
@@ -23,13 +22,7 @@ class GFIDTO(BaseModel):
     )
 
     mbs: int = Field(..., ge=1, le=999_999_999, description="Matični broj subjekta u sudskom registru.")
-    gfi_rbr: int = Field(..., ge=1, le=9_999_999_999, description="Redni broj izvješća u subjektu.")
-    vrsta_dokumenta: int = Field(..., ge=0, le=9, description="Vrsta dokumenta.")
-    oznaka_konsolidacije: int = Field(..., ge=0, le=9, description="Označava da li je u pitanju konsolidirano izvješće.")
-    godina_izvjestaja: int = Field(..., ge=1900, le=2100, description="Godina za koju je izvješće predano.")
-    datum_dostave: date = Field(..., description="Datum dostave izvještaja.")
-    datum_od: date = Field(..., description="Datum početka izvještajnog perioda GFI.")
-    datum_do: date = Field(..., description="Datum završetka izvještajnog perioda GFI.")
+    podruznica_rbr: int = Field(..., ge=1, le=9_999, description="Redni broj podružnice u subjektu.")
 
     def to_dict(self) -> Dict:
         return self.model_dump()
@@ -37,11 +30,11 @@ class GFIDTO(BaseModel):
     @classmethod
     def as_dict(cls, dto_list: List[T]) -> List[Dict[str, Any]]:
         """
-        Konverzija liste GFIDTO u listu dictonarya koristeći Pydantic model_dump
+        Konverzija liste PodruzniceDTO u listu dictonarya koristeći Pydantic model_dump
         za serijalizaciju svakog objekta.
 
         Args:
-            dto_list (List[T]): Lista GFIDTO objekata za konverziju.
+            dto_list (List[T]): Lista PodruzniceDTO objekata za konverziju.
 
         Returns:
             List[Dict[str, Any]]: Lista dictionarya objekata koji predstavljaju serijalizirane DTO objekte.

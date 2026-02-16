@@ -1,10 +1,11 @@
 from datetime import date
-from typing import Optional, TypeVar, Dict, List, Any, Union
+from typing import Any, Dict, List, Optional, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field
 
 # Osigurava da type hintovi rade kako treba sa nasljeđivanjem klase.
 T = TypeVar("T", bound="ReferencaPodatkaDTO")
+
 
 class ReferencaPodatkaDTO(BaseModel):
     """
@@ -23,8 +24,8 @@ class ReferencaPodatkaDTO(BaseModel):
         str_strip_whitespace=True,
     )
 
-    id: int = Field(..., ge=1, description="Primary key ID")
-    sifra: int = Field(..., ge=1, le=999999, description="Šifra države, jezika, grupe, itd...")
+    id: int = Field(..., ge=1, le=999_999_999_999, description="Primary key ID")
+    sifra: int = Field(..., ge=1, le=999_999, description="Šifra države, jezika, grupe, itd...")
     vrijedi_od: Optional[date] = Field(None, description="Podatak vrijedi od.")
     vrijedi_do: Optional[date] = Field(None, description="Podatak vrijedi do.")
     status: Optional[int] = Field(None, ge=0, le=9, description="Status podatka (0, 1, 5, 8, 9)).")

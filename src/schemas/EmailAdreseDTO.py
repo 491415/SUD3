@@ -1,4 +1,4 @@
-from pydantic import field_validator, Field
+from pydantic import Field
 
 from src.schemas.base_schemas.PovijestPodatkaDTO import PovijestPodatkaDTO
 

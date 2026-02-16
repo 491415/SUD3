@@ -1,9 +1,10 @@
-from typing import Optional, Dict, List, Any, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 from pydantic import BaseModel, ConfigDict, Field
 
 # Osigurava da type hintovi rade kako treba sa nasljeđivanjem klase.
 T = TypeVar("T", bound="PovijestPodatkaDTO")
+
 
 class PovijestPodatkaDTO(BaseModel):
     """
@@ -23,14 +24,14 @@ class PovijestPodatkaDTO(BaseModel):
         populate_by_name=True,
     )
 
-    mbs: int = Field(..., ge=1, le=999999999, description="Matični broj subjekta u sudskom registru. (MBS)")
+    mbs: int = Field(..., ge=1, le=999_999_999, description="Matični broj subjekta u sudskom registru. (MBS)")
     status: int = Field(..., ge=0, le=9,
                         description="Status podatka (0, 1, 5, 8, 9)), pogledati upute za razvojne inženjere.")
-    prbu_od: int = Field(..., ge=1, description="Pravni redni broj upisa kojim je podatak upisan.")
-    prbu_do: Optional[int] = Field(None, ge=1,
+    prbu_od: int = Field(..., ge=1, le=9_999, description="Pravni redni broj upisa kojim je podatak upisan.")
+    prbu_do: Optional[int] = Field(None, ge=1, le=9_999,
                                    description="Pravni redni broj upisa kojim je podatak brisan/prestao vrijediti.")
-    upis_id_od: int = Field(..., ge=1, description="ID upisa kojim je podatak upisan.")
-    upis_id_do: Optional[int] = Field(None, ge=1, description="ID upisa kojim je podatak brisan/prestao vrijediti.")
+    upis_id_od: int = Field(..., ge=1, le=999_999_999_999, description="ID upisa kojim je podatak upisan.")
+    upis_id_do: Optional[int] = Field(None, ge=1, le=999_999_999_999, description="ID upisa kojim je podatak brisan/prestao vrijediti.")
 
     def to_dict(self) -> Dict:
         return self.model_dump()
