@@ -5,7 +5,11 @@ from environs import env
 from pydantic import BaseModel
 
 from src.database.db_connection import OracleDBConn
-from src.utils.db.db_utils import dto_name_to_table_name, generate_insert_query, truncate_table
+from src.utils.db.db_utils import (
+    dto_name_to_table_name,
+    generate_insert_query,
+    truncate_table,
+)
 from src.utils.web.web_utils import get_sudreg_api_header
 
 
@@ -24,7 +28,7 @@ def create_dto_from_data(dto_class: type[BaseModel], data: dict) -> BaseModel:
     return dto_class(**data)
 
 
-def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel], target_table=None) -> tuple[bool, str, int]:
+def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel], snapshot_id: int, target_table=None) -> tuple[bool, str, int]:
     """
     Procesira pojdeinu tablicu i vraća status, eventualni error i broj zapisanih redaka.
 
@@ -32,6 +36,7 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
         conn (OracleDBConn): Konekcija na bazu podataka.
         table_name (str): Tablica koja se procesira.
         dto_class (type[BaseModel]): DTO objekt tablice koja se procesira.
+        snapshot_id (int): Najsvježiji snapshot_id.
         target_table (str, optional): Target tablica za punjenje (npr. "SUD_A" ili "SUD_B").
                                       Ako nije specificirana, koristi se bazno ime.
 
@@ -47,6 +52,11 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
 
     url = f"{env('SUDREG_URL')}/{table_name}"
 
+    # Ovdje se dodaje dodatni parametar za određene tablice kako bi se preuzeo stupac
+    # "status". Bez dodatnog parametra, ne dohvaćaju se podaci za navedeni stupac.
+    if table_name in env.list("HISTORY_TABLICE"):
+        url += f"?{env("SUDREG_HISTORY")}"
+
     # Tablica u koju se zapisuju podaci
     if target_table and target_table != db_table_name:
         logging.info(f"Target tablica: {actual_table}")
@@ -54,15 +64,19 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
 
     try:
         while True:
+            params = {
+                "limit": limit,
+                "offset": offset,
+                "only_active": "false",
+                "expand_relations": "false",
+            }
+            if snapshot_id is not None:
+                params["snapshot_id"] = snapshot_id
+
             with requests.get(
                     url,
                     headers=get_sudreg_api_header(),
-                    params={
-                        "limit": limit,
-                        "offset": offset,
-                        "only_active": "false",
-                        "expand_relations": "false"
-                    },
+                    params=params,
                     verify=True
             ) as response:
 
