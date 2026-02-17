@@ -14,3 +14,5 @@ class ScriptContext:
         self.successful_tables = 0
         self.total_tables = 0
         self.total_rows = 0
+        self.counts_tables = 0
+        self.counts_total = 0

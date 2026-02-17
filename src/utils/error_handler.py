@@ -230,6 +230,7 @@ class ScriptExecutionWrapper:
             Statistika:
             - Ukupno tablica: {context.total_tables}
             - Uspješne tablice: {context.successful_tables}
+            - Counts tablice: {context.counts_tables}/{context.counts_total}
             - Neuspješne tablice: {len(context.table_errors)}
             - Ukupno zapisanih redova: {context.total_rows:,}
 
@@ -251,6 +252,7 @@ class ScriptExecutionWrapper:
 
                 Statistika:
                 - Ukupno tablica: {context.total_tables}
+                - Counts tablice: {context.counts_tables}/{context.counts_total}
                 - Sve tablice uspješno preuzete i zapisane u bazu podataka!
                 - Ukupno zapisanih redova: {context.total_rows:,}
 
