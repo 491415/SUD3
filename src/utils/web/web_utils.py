@@ -15,6 +15,7 @@ _sudreg_access_token = {}
 # Flag da se API definicija provjeri samo jednom po pokretanju
 _api_definition_checked = False
 
+
 def _check_api_availability(response: Response) -> bool:
     """
     Provjera da li je SUDREG API dostupan.
@@ -123,12 +124,12 @@ def check_api_definition() -> None:
     if local_API_definition == online_API_definition:
         logging.info("Lokalni SUDREG API konfiguracijski file je up to date.")
     else:
-        logging.warning(f"Postoji nova verzija SUDREG API konfiguracijskog filea.")
+        logging.warning("Postoji nova verzija SUDREG API konfiguracijskog filea.")
         # Spremanje nove verzije SUDREG API konfiguracijskog filea na mjesto staroga
         with open(env("SUDREG_API_DEF_PATH"), "w", encoding="utf8") as f:
             f.write(online_API_definition)
         logging.info(
-            f"Ažurirana verzija SUDREG API konfiguracijskog filea."
+            "Ažurirana verzija SUDREG API konfiguracijskog filea."
         )
         # Slanje maila upozorenja da je došlo do promjene SUDREG API konfiguracijskog filea
         send_warning_notification()
@@ -204,6 +205,76 @@ def get_sudreg_api_header() -> Dict:
         "Content-Type": "application/json",
         "Authorization": f"Bearer {_sudreg_access_token['access_token']}",
     }
+
+
+def get_snapshot_id() -> int | None:
+    """
+    Dohvaća najsvježiji snapshots_id.
+
+    Returns:
+         int | None: Najnoviji (najveći) snapshots_id ili None
+    """
+    url = env("SUDREG_SNAPSHOTS_URL")
+    logging.info("Dohvaćam najsvježiji snapshot_id...")
+
+    try:
+        with requests.get(
+                url,
+                headers=get_sudreg_api_header(),
+                params={
+                    "limit": 10000,
+                    "offset": 0,
+                    "only_active": "false",
+                    "expand_relations": "false",
+                },
+                verify=True
+        ) as response:
+
+            snapshot_id = 0
+            for item in response.json():
+                if item["id"] > snapshot_id:
+                    snapshot_id = item["id"]
+
+            logging.info(f"Dohvaćen snapshot_id {snapshot_id}")
+
+            return snapshot_id
+    except Exception as e:
+        logging.warning(f"Došlo je do greške prilikom dohvata snapshots_id: {e}")
+        logging.warning("Dohvat podataka će koristiti defaultni snapshots_id.")
+        return None
+
+
+def get_table_counts() -> Dict[str, int] | None:
+    """
+    Dohvaća broj redaka za svaku tablicu.
+
+    Returns:
+        Dict[str, int] | None: {"naziv_tablice": broj_redaka} ili None.
+    """
+    url = env("SUDREG_COUNTS_URL")
+
+    try:
+        with requests.get(
+                url,
+                headers=get_sudreg_api_header(),
+                params={
+                    "limit": 10000,
+                    "offset": 0,
+                    "only_active": "false",
+                    "expand_relations": "false",
+                },
+                verify=True
+        ) as response:
+            table_rows = {}
+            for item in response.json():
+                item["table_name"] = item["table_name"][4:]
+                table_rows[item["table_name"].lower()] = item["count_svi"]
+
+            return table_rows
+    except Exception as e:
+        logging.warning(f"Došlo je do greške prilikom dohvata counts za tablice: {e}")
+        logging.warning("Dohvat podataka se nastavlja bez provjere broja dohvaćenih redaka.")
+        return None
 
 
 def reset_sudreg_token() -> None:
