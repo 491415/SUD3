@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import Field
@@ -15,6 +16,7 @@ class SudoviDTO(ReferencaPodatkaDTO):
     # ge=0 stavljeno jer ima podatak sa ID-em '0'
     id: int = Field(..., ge=0, le=999_999_999_999, description="Primary key ID")
     sifra: int = Field(..., ge=0, le=999_999, description="Šifra države, jezika, grupe, itd...")
+    vrijedi_od: datetime = Field(None, description="Podatak vrijedi od.")
 
     naziv: str = Field(..., min_length=1, max_length=128, description="Naziv suda.")
     sifra_zupanije: int = Field(..., ge=1, le=999, description="Šifra županije.")
