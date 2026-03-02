@@ -1,4 +1,5 @@
 import logging
+from typing import Dict
 
 import requests
 from environs import env
@@ -26,6 +27,22 @@ def create_dto_from_data(dto_class: type[BaseModel], data: dict) -> BaseModel:
     """
     # Pydantic automatski prihvaća dictionary i mapira ga na polja modela.
     return dto_class(**data)
+
+
+def table_in_no_counts(table_name: str, table_counts: Dict[str, int]) -> None:
+    """
+    Ispisuje u log file broj redaka proslijeđene tablice ako se ona nalazi u table_counts
+    dictionaryu.
+
+    Args:
+        table_name (str): Naziv tablice.
+        table_counts (Dict[str, int]): Dictionary sa podacima o broju redaka pojedine tablice.
+    """
+    # S obzirom da se podaci dohvaćaju iz tablice counts, nema podataka sama za sebe
+    # Snapshots je povezan sa trenutnim ID-em najsvježijih podataka te ga također nema
+    if table_name not in env.list("NO_COUNTS"):
+        logging.info(f"Broj redaka u tablici {table_name} je {table_counts[table_name]}")
+        logging.info("-" * 100)
 
 
 def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel], snapshot_id: int, target_table=None) -> tuple[bool, str, int]:
@@ -116,7 +133,7 @@ def process_table(conn: OracleDBConn, table_name: str, dto_class: type[BaseModel
         # Pokušaj truncate tablicu zbog greške
         logging.warning(f"Pokrećem truncate tablice {actual_table} zbog greške...")
         try:
-            truncate_table(conn, db_table_name)
+            truncate_table(conn, actual_table)
             logging.info(f"Truncate tablice {actual_table} uspješan")
         except Exception as truncate_error:
             truncate_msg = f"KRITIČNA GREŠKA: Truncate nije uspio: {truncate_error}"
