@@ -7,22 +7,6 @@ from src.models.SudregTables import get_model_for_table
 from src.utils.db.db_utils import dto_name_to_table_name
 
 
-def get_inactive_table_name(naziv_tablice_json: str, inactive_sufix: str) -> str:
-    """
-    Vraća naziv sa sufixom trenutno neaktivne tablice.
-
-    Args:
-        naziv_tablice_json (str): Naziv tablice bez sufixa.
-        inactive_sufix (str): Neaktivan sufix.
-
-    Returns:
-        str: Puni naziv neaktivne tablice sa sufixom.
-    """
-    db_table_name = dto_name_to_table_name(get_model_for_table(naziv_tablice_json).__name__)
-
-    return f"{db_table_name}_{inactive_sufix}"
-
-
 class TableManager:
     """
     Manager stanja tablica.
