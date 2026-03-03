@@ -10,7 +10,6 @@ class ScriptContext:
 
     def __init__(self):
         self.db = None
-        self.table_errors = []
         self.successful_tables = 0
         self.total_tables = 0
         self.total_rows = 0
