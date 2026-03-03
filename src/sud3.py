@@ -93,11 +93,6 @@ def download_data(shared_data: ScriptContext) -> None:
             logging.error(f"✗ Neuspješno preuzimanje za {table_name}")
             logging.error(f"✗ Greška: {error_msg}")
             logging.error("-" * 100)
-            shared_data.table_errors.append({
-                "table_name": table_name,
-                "error_message": error_msg,
-                "timestamp": datetime.now().strftime("%H:%M:%S")
-            })
 
             cleanup_filled_tables(db, successfully_filled_targets)
 
