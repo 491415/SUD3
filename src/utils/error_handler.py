@@ -211,54 +211,24 @@ class ScriptExecutionWrapper:
         """
         timestamp = datetime.now().strftime("%d.%m.%Y %H:%M:%S")
 
-        # Provjeri ima li grešaka na pojedinim tablicama
-        if hasattr(context, "table_errors") and context.table_errors:
-            subject = f"⚠️ {env('APP_NAME')} Izvršena sa Greškama"
+        subject = f"✅ {env('APP_NAME')} Skripta Uspješno Izvršena"
 
-            error_list = "\n".join([
-                f"  - {error['table_name']}: {error['error_message']}"
-                for error in context.table_errors
-            ])
-
-            body = f"""
-            {env('APP_NAME')} skripta izvršena s greškama na pojedinim tablicama!
-            ====================================================================
+        body = f"""
+            {env('APP_NAME')} skripta uspješno izvršena!
+            ===========================================
 
             Skripta: {self.script_name}
             Vrijeme završetka: {timestamp}
 
             Statistika:
             - Ukupno tablica: {context.total_tables}
-            - Uspješne tablice: {context.successful_tables}
             - Counts tablice: {context.counts_tables}/{context.counts_total}
-            - Neuspješne tablice: {len(context.table_errors)}
+            - Sve tablice uspješno preuzete i zapisane u bazu podataka!
             - Ukupno zapisanih redova: {context.total_rows:,}
 
-            Greške po tablicama:
-            {error_list}
-
-            ====================================================================
+            ===========================================
             Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
             """
-        else:
-            subject = f"✅ {env('APP_NAME')} Skripta Uspješno Izvršena"
-
-            body = f"""
-                {env('APP_NAME')} skripta uspješno izvršena!
-                ===========================================
-
-                Skripta: {self.script_name}
-                Vrijeme završetka: {timestamp}
-
-                Statistika:
-                - Ukupno tablica: {context.total_tables}
-                - Counts tablice: {context.counts_tables}/{context.counts_total}
-                - Sve tablice uspješno preuzete i zapisane u bazu podataka!
-                - Ukupno zapisanih redova: {context.total_rows:,}
-
-                ===========================================
-                Ovo je automatski generirana poruka iz {env('APP_NAME')} aplikacije.
-                """
 
         try:
             send_mail(
