@@ -2,6 +2,7 @@ import json
 import logging
 import time
 from datetime import datetime, timedelta
+from pathlib import Path
 from typing import Dict
 
 import requests
@@ -113,7 +114,8 @@ def check_api_definition() -> None:
         _report_connection_error(str(e))
 
     # Čitanje lokalne verzije SUDREG API konfiguracije
-    with open(env("SUDREG_API_DEF_PATH"), "r", encoding="utf8") as file:
+    local_api_def_path = Path(__file__).parent.parent.parent / env("SUDREG_API_DEF_PATH")
+    with open(local_api_def_path, "r", encoding="utf8") as file:
         # Formatiranje lokalne verzije SUDREG API konfiguracije
         local_API_definition = json.dumps(json.load(file), indent=2, ensure_ascii=False)
 
@@ -126,7 +128,7 @@ def check_api_definition() -> None:
     else:
         logging.warning("Postoji nova verzija SUDREG API konfiguracijskog filea.")
         # Spremanje nove verzije SUDREG API konfiguracijskog filea na mjesto staroga
-        with open(env("SUDREG_API_DEF_PATH"), "w", encoding="utf8") as f:
+        with open(local_api_def_path, "w", encoding="utf8") as f:
             f.write(online_API_definition)
         logging.info(
             "Ažurirana verzija SUDREG API konfiguracijskog filea."
